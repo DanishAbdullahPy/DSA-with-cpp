@@ -1,0 +1,60 @@
+Syntax of Array Declaration
+data_type array_name [size];
+         or
+data_type array_name [size1] [size2]...[sizeN];
+
+
+
+#include <iostream>
+
+int main() {
+    // declaring an array of integers
+    int arr_int[5];
+    // declaring an array of characters
+    char arr_char[5];
+
+    return 0;
+}
+
+
+
+1. Array Initialization with Declaration
+In this method, we initialize the array along with its declaration.
+We use an initializer list to initialize multiple elements of the array. An initializer list is the list of values enclosed within braces { } separated b a comma.
+
+data_type array_name [size] = {value1, value2, ... valueN};
+
+
+
+2. Array Initialization with Declaration without Size
+If we initialize an array using an initializer list, 
+we can skip declaring the size of the array as the compiler can automatically deduce the size of the array in these cases. 
+The size of the array in these cases is equal to the number of elements present in the initializer list as the compiler can automatically deduce the size of the array.
+
+data_type array_name[] = {1,2,3,4,5};
+
+
+
+
+
+3. Array Initialization after Declaration (Using Loops)
+We initialize the array after the declaration by assigning the initial value to each element individually. 
+We can use for loop, while loop, or do-while loop to assign the value to each element of the array.
+
+for (int i = 0; i < N; i++) {
+    array_name[i] = valuei;
+}
+
+Access Array Elements
+We can access any element of an array in C using the array subscript operator [ ]  and the index value i of the element.
+
+array_name [index];
+
+
+
+Access Array Elements
+We can access any element of an array in C using the array subscript operator [ ]  and the index value i of the element.
+
+array_name [index];
+
+
