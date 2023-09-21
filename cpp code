@@ -5,11 +5,14 @@ int main()
 {
   int x, y ;
   int sum;
+  int mul
   cout << "Ek no Dakhil karein:" ;
   cin >> x;
   cout << "Dusra no Dakhil karein:" ;
   cin >> y;
   sum = x+y;
   cout << "Baherhaal apka hisab ye hua:" << sum;
+  int mul = x*y;
+  cout<< "multiplication is " <<mul
   return 0;
 }
