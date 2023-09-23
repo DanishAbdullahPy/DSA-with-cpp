@@ -1,0 +1,43 @@
++ additon
+- subs
+* multiply
+/ division
+++ 
+--
+=
++=
+-=  
+x+=3
+x-=3
+x*=3
+x/=3
+
+%=      x %= 3 x = x % 3
+
+
+
+==  x=b
+!=   not equal
+
+
+>
+>=
+
+
+x>=byte
+
+
+
+
+
+<=
+
+
+
+
+&&    logical and  -  return true if both statement ar tru
+
+!! logical or - return true if one of the statement are true
+
+! - logical not - reeverse the result 
+
