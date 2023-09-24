@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+int main() {
+    // Declare a 3x2 array. This creates a contiguous block of memory.
+    int arr[3][2] = {
+        {1, 2},  // First row
+        {3, 4},  // Second row
+        {5, 6}   // Third row
+    };
+
+    // Accessing elements: arr[row][column]
+    printf("Element at (2,1): %d\n", arr[1][0]); // Output will be 3
+
+    // Nested loop to iterate through all elements
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            printf("%d ", arr[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+
+
+/*Dynamic size 2d Array*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // Declare a pointer to a pointer. It will serve as our 2D array.
+    int **arr;
+
+    // Allocate memory for 3 pointers (3 rows).
+    // Each of these pointers will point to an array (a row).
+    arr = malloc(3 * sizeof(int *));
+    if (arr == NULL) {
+        return 1;  // Memory allocation failed
+    }
+
+    // Allocate memory for each row and set values.
+    for (int i = 0; i < 3; ++i) {
+        // Allocate memory for 2 integers in each row.
+        arr[i] = malloc(2 * sizeof(int));
+        if (arr[i] == NULL) {
+            return 1;  // Memory allocation failed
+        }
+
+        // Initialize the elements. arr[i][j] = i * j;
+        arr[i][0] = i;
+        arr[i][1] = i * 10;
+    }
+
+    // Accessing elements: arr[row][column]
+    // Nested loop to iterate through the dynamically allocated 2D array
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            printf("%d ", arr[i][j]);  // Print each element
+        }
+        printf("\n");
+    }
+
+    // Free each dynamically-allocated row
+    for (int i = 0; i < 3; ++i) {
+        free(arr[i]);
+    }
+
+    // Free the array containing the row pointers
+    free(arr);
+
+    return 0;
+}
