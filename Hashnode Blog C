@@ -1,0 +1,290 @@
+Command-Line argument parsing
+When developing a C program that takes command-line arguments, the operating system passes these arguments to your main() function. This is done via the argc and argv parameters in main(). Here, argc is the argument count, and argv is an array of pointers to strings, representing the arguments. However, this array of pointers is actually passed as a pointer to a pointer (char **argv).
+
+With arrays, you need to set their size when you create them, and you can't change that size later. But with a pointer to a pointer, you can point it to different areas of memory as needed. This lets you change the size by pointing to larger or smaller blocks of memory.
+
+
+
+#include <stdio.h>
+
+// Our main function which gets command line arguments
+int main(int argc, char **argv) {
+    // Loop through each command-line argument
+    for(int i = 0; i < argc; i++) {
+        // Print the argument
+        // argv[i] grabs the i-th argument from the command line
+        printf("Argument %d is %s\n", i, argv[i]);
+    }
+    return 0;
+}
+It may look confusing that we aren't dereferencing argv before we access the value. How is this possible?
+
+The truth is, C does that under the hood for us when indexing an array.
+
+When you write argv[i], it's the same as *(argv + i). The pointer argv is incremented by i positions and then dereferenced to get the value stored at that location.
+
+Now, that may be confusing. To clarify, an array pointer points to the first element of its array. That's why we need to increment argv before we dereference to access the value.
+
+So, when you see *(argv + i), you can read it like this:
+
+"Take the pointer argv".
+
+"Move i steps down to point to the i-th element in the array."
+
+"Now dereference this new pointer to give me the value stored there."
+
+Writing argv[i] is more convenient however. So stick to that.
+
+Advanced function arguments
+If you pass a single-level pointer to the function and modify it, the changes won't be reflected outside the function. This is because the function works on a local copy of the pointer, not on the original pointer itself.
+
+The solution is to pass pointer to the pointer as an argument to the function. This way, you're giving the function the ability to modify the pointer itself, not just the data it points to.
+
+This wouldn't work:
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to initialize array
+void initializeArray(int *arr, int size) {
+    arr = malloc(size * sizeof(int));  // Allocate memory
+    for (int i = 0; i < size; ++i) {
+        arr[i] = i;
+    }
+}
+
+int main() {
+    int *myArray = NULL;  // Declare a pointer to int
+    initializeArray(myArray, 5);  // Call function to initialize array
+
+    if (myArray == NULL) {
+        printf("Memory not allocated.\n");
+    }
+
+    return 0;
+}
+In this example, myArray is still NULL after the function call because the function modifies a local copy of myArray, not myArray itself.
+
+This would work:
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to initialize array
+void initializeArray(int **arr, int size) {
+    // Allocate memory
+    *arr = malloc(size * sizeof(int));  
+    // Initialize array
+    for (int i = 0; i < size; ++i) {
+        (*arr)[i] = i;
+    }
+}
+
+int main() {
+    int *myArray = NULL;  // Declare a pointer to int
+    initializeArray(&myArray, 5);  // Pass the address of the pointer to initialize array
+
+    // Check if memory was allocated and array was initialized
+    if (myArray != NULL) {
+        for (int i = 0; i < 5; ++i) {
+            printf("%d ", myArray[i]);  // Should print 0 1 2 3 4
+        }
+        printf("\n");
+    }
+
+    // Don't forget to free the memory
+    free(myArray);
+
+    return 0;
+}
+In this example, initializeArray() takes a pointer to a pointer (int **arr). Inside the function, we use *arr to access what arr points to, the original myArray pointer in main(), and allocate memory for it. This way, the changes are also reflected in main().
+
+Function Pointers
+Function pointers in C are a way to store the address of a function, so you can call the function later, or even pass it to another function as a parameter.
+
+The syntax for declaring a function pointer: return_type (*function_pointer_name)(parameter_type1, parameter_type2, ...); .
+
+Let's say for example we had this function:
+
+
+
+int add(int a, int b);
+The pointer to the function would be declared as:
+
+
+COPY
+
+COPY
+int (*add_ptr)(int, int);
+You can initialize the function pointer using the address-of operator &:
+
+
+
+add_ptr = &add;
+To call the function, you deference the pointer:
+
+
+COPY
+
+COPY
+int result = (*add_ptr)(5, 3);  // this calls add(5, 3)
+C however let's you omit the dereferencing when calling pointer functions. This is also valid:
+
+
+
+int result = add_ptr(5, 3);  // this also calls add(5, 3)
+When you need them
+Function pointers in C let you treat functions like variables: you can assign functions to them, pass them to other functions, or even call them, just like you'd use a normal variable. They give you a way to choose and use different functions on-the-fly.
+
+Use cases when they're often used:
+
+Plug-in Architectures: If you are developing a system that allows for plug-ins or modules, function pointers can serve as hooks to extend functionality without modifying existing code.
+
+Event-Driven Programming: In GUIs or other event-driven systems, function pointers can be used to handle events dynamically, such as button clicks or key presses.
+
+Callback Functions: Function pointers are often used as arguments to functions that require a user-defined operation, like custom comparison functions in sorting algorithms.
+
+State Machines: In embedded systems or protocol designs, function pointers can represent states, making the state machine compact and easy to manage.
+
+Realistic example
+Let's say we're building a GUI framework.
+
+Typically, GUI frameworks include various widgets like buttons, checkboxes, sliders, etc., that the user can interact with.
+
+In this example, we'll focus on buttons.
+
+When a user clicks a button, some specific action should occur. This action could be anything: opening a new window, saving a file, or even exiting the application.
+
+One of the challenges in building a GUI framework is providing a way to easily customize this behavior for different buttons.
+
+Why function pointer is necessary
+Using function pointers allows us to assign custom behavior to each button dynamically.
+
+By attaching a function pointer as an event handler for a button click event, the framework becomes more powerful for the users.
+
+Users can specify what should happen when a button is clicked by passing a function pointer that points to their custom function.
+
+
+#include <stdio.h>
+
+// Function pointer type definition for handling button clicks.
+// We name the type to make the code more readable.
+typedef void (*ButtonClickedHandler)(void);
+
+// Button structure, encapsulating the attributes of a button.
+typedef struct {
+    ButtonClickedHandler onClick;  // Function pointer for the click event.
+    const char* label;  // Label text on the button.
+} Button;
+
+// Function that simulates clicking a button.
+// It takes a pointer to a Button structure.
+void button_click(Button* button) {
+    // Check if a function pointer has been set.
+    if (button->onClick != NULL) {
+        printf("Button '%s' clicked. ", button->label);
+        button->onClick();  // Call the function through the function pointer.
+    } else {
+        printf("Button '%s' clicked but no action assigned.\n", button->label);
+    }
+}
+
+// A custom function that gets called when a button is clicked.
+void say_hello() {
+    printf("Hello, World!\n");
+}
+
+// Another custom function for another button.
+void say_goodbye() {
+    printf("Goodbye, World!\n");
+}
+
+int main() {
+    // Create two buttons.
+    Button helloButton = {say_hello, "Say Hello"};
+    Button goodbyeButton = {say_goodbye, "Say Goodbye"};
+
+    // Simulate clicking the buttons.
+    button_click(&helloButton);  // Output: "Button 'Say Hello' clicked. Hello, World!"
+    button_click(&goodbyeButton);  // Output: "Button 'Say Goodbye' clicked. Goodbye, World!"
+
+    return 0;
+}
+Pointers and Structs
+As you probably know by now, we can have pointers pointing to structs too.
+
+
+
+struct Person {
+    char name[50];
+    int age;
+};
+
+struct Person *personPtr; // how you would declare a pointer
+How you would iniaitilize and access struct pointers:
+
+
+
+struct Person personInstance;
+personPtr = &personInstance;
+
+strcpy(personPtr->name, "Alice");
+personPtr->age = 30;
+Dynamic memory allocation
+How you would dynamically allocate memory
+
+
+\
+personPtr = (struct Person *) malloc(sizeof(struct Person));
+
+if (personPtr) {
+    strcpy(personPtr->name, "Bob");
+    personPtr->age = 25;
+}
+
+free(personPtr);  // Don't forget to release memory
+The (struct Person *) before the malloc function call is a type cast. It explicitly tells the compiler to treat the raw pointer returned by malloc as a pointer to struct Person.
+
+Pointers inside structs
+
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+In the example above, a Node struct contains an integer and a pointer to another Node. This forms the basis for linked lists.
+
+Functions and Structs
+
+COPY
+
+COPY
+void updateAge(struct Person *p, int newAge) {
+    if (p) {
+        p->age = newAge;
+    }
+}
+Pointers to Array of structs
+
+
+struct Person people[10];
+struct Person *arrayPtr;
+
+arrayPtr = people;
+
+(arrayPtr + 2)->age = 28; // This will set the age of the third person in the array to 28
+Generic pointers
+Imagine you're a postman delivering mail to houses. Now, instead of knowing the specific details of every house, all you care about is the address. That way, you can deliver to any house, big or small.
+
+A generic pointer is like that postman. It doesn't care about what data type it's pointing to, it just holds an address.
+
+It can hold the address of any data type and doesn't know what type of data it's pointing to.
+
+Declaration
+
+COPY
+
+COPY
+void *pointerName; // this is how it looks like
