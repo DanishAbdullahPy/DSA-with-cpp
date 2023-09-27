@@ -16,3 +16,6 @@ int main()
   cout<< "multiplication is " <<mul
   return 0;
 }
+
+
+#include.<stdio.h>
