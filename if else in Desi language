@@ -1,0 +1,23 @@
+#include <iostream>
+using namespace std;
+int main ()
+{
+int library = 3;
+
+if( library < 3)
+{
+cout << "Shaam mein chai pienge" ;
+
+}
+
+else 
+{ 
+
+cout << " padhai karenge" ;
+
+}
+return 0;
+
+
+
+}
