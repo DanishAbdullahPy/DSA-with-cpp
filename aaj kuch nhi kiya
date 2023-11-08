@@ -2463,6 +2463,16 @@ return 0;
 }
 
 
+#include.<stdio.h>
+int main ()
+{
+int kuch nhi kiya=5
+cout << kuch nhi kya<< endl;
+retyrn o;
+}
+
+
+
 
 
 
